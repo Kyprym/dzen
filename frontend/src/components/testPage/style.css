@@ -1,0 +1,35 @@
+.scale {
+    display: inline-block;
+    /* Строчно-блочный элемент */
+    overflow: hidden;
+    /* Скрываем всё за контуром */
+}
+
+#container {
+    border: 2em solid black;
+    border-radius: 22px;
+}
+
+.class_1 {
+    color: red;
+}
+
+.class_2 {
+    background-color: aqua;
+}
+
+.scale img {
+    transition: 1s;
+    /* Время эффекта */
+    display: block;
+    /* Убираем небольшой отступ снизу */
+}
+
+.scale img:hover {
+    transform: scale(1.2);
+    /* Увеличиваем масштаб */
+}
+
+h1 {
+    position: fixed;
+}
