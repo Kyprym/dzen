@@ -2,11 +2,12 @@ const express = require('express');
 const fs = require('fs')
 const { v4: uuidv4 } = require('uuid');
 
-let uuid = uuidv4();
+let uuid = uuidv4(); //генерю уникальные id , в последующем - не нужно
 
 
 let VideoDataBase = require('./dataBase/videoDataBase/VideoDataBase.json');
 const { json } = require('body-parser');
+const { Console } = require('console');
 
 
 const app = express();
@@ -14,8 +15,11 @@ const PORT = process.env.PORT || 4000;
 
 async function appendDataInBD(data, body) {
     data.push(body)
-    await fs.writeFile("./src/dataBase//videoDataBaseVideoDataBase.json", JSON.stringify(data), "utf8", () => { })
+    await fs.writeFile("./src/dataBase//videoDataBase/videoDataBase.json", JSON.stringify(data), "utf8", () => { })
 
+}
+async function editDataInBD(data) {
+    await fs.writeFile("./src/dataBase/videoDataBase/VideoDataBase.json", JSON.stringify(data), err => console.log(err))
 }
 
 
@@ -39,7 +43,7 @@ app.post('/', async (req, res) => {
         !body.VideoPoster ||
         !body.wiewsCount
     ) {
-        res.json('не хватает данных или не корректный запрос');
+        res.json('не хватает данных или не корректный POST запрос');
         return;
     } else {
         fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", (err, data) => {
@@ -53,9 +57,6 @@ app.post('/', async (req, res) => {
     }
     res.json(body)
 });
-
-
-
 
 
 app.put('/', async (req, res) => {
@@ -76,7 +77,7 @@ app.put('/', async (req, res) => {
 
         fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
             if (err) {
-                console.log(err);
+                res.json("нет ужных данных")
             } else {
                 let jsonDataInDB = JSON.parse(data);
                 const lengthDatainBD = jsonDataInDB.length;
@@ -88,31 +89,28 @@ app.put('/', async (req, res) => {
                         jsonDataInDB[i].wiewsCount == oldWiewsCount
                     ) {
 
-
-                        const newDataVideo = {
+                        const newElemDataVideo = {
                             videoId: req.body.newVideoId,
                             videoName: req.body.newVideoName,
+                            videoChannelName: jsonDataInDB[i].videoChannelName,
                             VideoPoster: req.body.newVideoPoster,
                             wiewsCount: req.body.newWiewsCount
                         }
-
-
-
-
-
-                        res.json(jsonDataInDB[i])
-
-                    }
-                }
-            }
-        })
+                        jsonDataInDB[i] = newElemDataVideo;
+                        await editDataInBD(jsonDataInDB);
+                        res.json(jsonDataInDB);
+                    };
+                };
+            };
+        });
 
 
 
 
 
     } else {
-        console.log('не хватает данных')
+        console.log('не хватает данных или не корректный PUT запрос');
+        res.json('не хватает данных или не корректный PUT запрос');
     }
 
 });
