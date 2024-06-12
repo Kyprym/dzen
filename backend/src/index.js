@@ -74,7 +74,6 @@ app.put('/', async (req, res) => {
         oldWiewsCount && newWiewsCount
 
     ) {
-
         fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
             if (err) {
                 res.json("нет ужных данных")
@@ -103,11 +102,6 @@ app.put('/', async (req, res) => {
                 };
             };
         });
-
-
-
-
-
     } else {
         console.log('не хватает данных или не корректный PUT запрос');
         res.json('не хватает данных или не корректный PUT запрос');
@@ -120,27 +114,53 @@ app.put('/', async (req, res) => {
 
 
 
-
-
-app.listen(PORT, () => {
-    console.log(`API starting on port ${PORT}`)
-})
-
-
-
-
-
-
-
-/*
-
 app.delete('/', (req, res) => {
-    const { name } = req.body;
+    const {
+        videoId,
+        videoName,
+        videoChannelName,
+        VideoPoster,
+        wiewsCount
+    } = req.body;
 
+    if (
+        videoId &&
+        videoName &&
+        videoChannelName &&
+        VideoPoster &&
+        wiewsCount
+    ) {
+        fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
+            if (err) {
+                res.json("нет ужных данных для удаления")
+            } else {
+                let jsonDataInDB = JSON.parse(data);
+                console.log(jsonDataInDB);
+
+
+                jsonDataInDB.filter()
+
+
+
+
+                res.json(jsonDataInDB);
+            };
+        });
+    }
+
+
+
+
+
+
+    /*
+    const { name } = req.body;
     dataBase = dataBase.filter(elem => {
         return elem !== name;
     })
-    res.json({ status: `${name} is not your friend anymore` });
+    */
+
+
 });
 
 
@@ -149,4 +169,6 @@ app.delete('/', (req, res) => {
 
 
 
-*/
+app.listen(PORT, () => {
+    console.log(`API starting on port ${PORT}`)
+})
