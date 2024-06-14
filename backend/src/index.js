@@ -24,7 +24,7 @@ async function editDataInBD(data) {
 
 
 
-app.use(express.json()); //переводим все запросы в json
+app.use(express.json());
 
 
 
@@ -76,7 +76,7 @@ app.put('/', async (req, res) => {
     ) {
         fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
             if (err) {
-                res.json("нет ужных данных")
+                res.json("нет нужных данных")
             } else {
                 let jsonDataInDB = JSON.parse(data);
                 const lengthDatainBD = jsonDataInDB.length;
@@ -102,8 +102,8 @@ app.put('/', async (req, res) => {
                 };
             };
         });
+
     } else {
-        console.log('не хватает данных или не корректный PUT запрос');
         res.json('не хватает данных или не корректный PUT запрос');
     }
 
@@ -119,31 +119,36 @@ app.delete('/', (req, res) => {
         videoId,
         videoName,
         videoChannelName,
-        VideoPoster,
-        wiewsCount
+        VideoPoster
     } = req.body;
 
     if (
         videoId &&
         videoName &&
         videoChannelName &&
-        VideoPoster &&
-        wiewsCount
+        VideoPoster
     ) {
         fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
             if (err) {
                 res.json("нет ужных данных для удаления")
             } else {
                 let jsonDataInDB = JSON.parse(data);
-                console.log(jsonDataInDB);
+                let modArrBD = [];
+                for (let i = 0; i < jsonDataInDB.length; i++) {
+                    if (
+                        jsonDataInDB[i].videoId === videoId &&
+                        jsonDataInDB[i].videoName === videoName &&
+                        jsonDataInDB[i].videoChannelName === videoChannelName &&
+                        jsonDataInDB[i].VideoPoster == VideoPoster
+                    ) {
 
+                    } else {
+                        modArrBD.push(jsonDataInDB[i]);
+                    }
+                }
+                await editDataInBD(modArrBD)
 
-                jsonDataInDB.filter()
-
-
-
-
-                res.json(jsonDataInDB);
+                res.json(modArrBD);
             };
         });
     }
@@ -153,12 +158,6 @@ app.delete('/', (req, res) => {
 
 
 
-    /*
-    const { name } = req.body;
-    dataBase = dataBase.filter(elem => {
-        return elem !== name;
-    })
-    */
 
 
 });

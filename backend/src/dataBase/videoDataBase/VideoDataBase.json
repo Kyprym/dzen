@@ -1,12 +1,5 @@
 [
     {
-        "videoId": "b1737838-dd03-4195-9780-b7b51b49afc3",
-        "videoName": "video1",
-        "videoChannelName": "videoChannelName1",
-        "VideoPoster": "VideoPoster1",
-        "wiewsCount": 1
-    },
-    {
         "videoId": "581c3704-7378-4857-80b4-bba4c180335a",
         "videoName": "video2",
         "videoChannelName": "videoChannelName2",
@@ -54,5 +47,12 @@
         "videoChannelName": "videoChannelName8",
         "VideoPoster": "VideoPoster8",
         "wiewsCount": 8
+    },
+    {
+        "videoId": "b1737838-dd03-4195-9780-b7b51b49afc3",
+        "videoName": "test_video",
+        "videoChannelName": "videoChannelName1",
+        "VideoPoster": "test_video_poster",
+        "wiewsCount": 12
     }
 ]
