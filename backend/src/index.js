@@ -15,11 +15,11 @@ const PORT = process.env.PORT || 4000;
 
 async function appendDataInBD(data, body) {
     data.push(body)
-    await fs.writeFile("./src/dataBase//videoDataBase/videoDataBase.json", JSON.stringify(data), "utf8", () => { })
+    fs.writeFile("./src/dataBase//videoDataBase/videoDataBase.json", JSON.stringify(data), "utf8", () => { })
 
 }
 async function editDataInBD(data) {
-    await fs.writeFile("./src/dataBase/videoDataBase/VideoDataBase.json", JSON.stringify(data), err => console.log(err))
+    fs.writeFile("./src/dataBase/videoDataBase/VideoDataBase.json", JSON.stringify(data), err => console.log(err))
 }
 
 
@@ -40,8 +40,7 @@ app.post('/', async (req, res) => {
     if (!body.videoId ||
         !body.videoName ||
         !body.videoChannelName ||
-        !body.VideoPoster ||
-        !body.wiewsCount
+        !body.VideoPoster
     ) {
         res.json('не хватает данных или не корректный POST запрос');
         return;
@@ -63,51 +62,46 @@ app.put('/', async (req, res) => {
     const {
         oldVideoId, newVideoId,
         oldVideoName, newVideoName,
-        oldVideoPoster, newVideoPoster,
-        oldWiewsCount, newWiewsCount
+        oldVideoPoster, newVideoPoster
     } = req.body;
 
-    if (
-        oldVideoId && newVideoId &&
+    if (oldVideoId && newVideoId &&
         oldVideoName && newVideoName &&
-        oldVideoPoster && newVideoPoster &&
-        oldWiewsCount && newWiewsCount
+        oldVideoPoster && newVideoPoster) {
 
-    ) {
-        fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
-            if (err) {
-                res.json("нет нужных данных")
-            } else {
-                let jsonDataInDB = JSON.parse(data);
-                const lengthDatainBD = jsonDataInDB.length;
-                for (let i = 0; i < lengthDatainBD; i++) {
-                    if (
-                        jsonDataInDB[i].videoId == oldVideoId &&
-                        jsonDataInDB[i].videoName == oldVideoName &&
-                        jsonDataInDB[i].VideoPoster == oldVideoPoster &&
-                        jsonDataInDB[i].wiewsCount == oldWiewsCount
-                    ) {
 
-                        const newElemDataVideo = {
-                            videoId: req.body.newVideoId,
-                            videoName: req.body.newVideoName,
-                            videoChannelName: jsonDataInDB[i].videoChannelName,
-                            VideoPoster: req.body.newVideoPoster,
-                            wiewsCount: req.body.newWiewsCount
-                        }
-                        jsonDataInDB[i] = newElemDataVideo;
-                        await editDataInBD(jsonDataInDB);
-                        res.json(jsonDataInDB);
-                    };
-                };
-            };
-        });
+        fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", (err, data) => {
+            const jsonDataInDB = JSON.parse(data);
+            let modArrBD = [];
+
+            for (let i = 0; jsonDataInDB.length > i; i++) {
+                if (
+                    jsonDataInDB[i].videoId === oldVideoId &&
+                    jsonDataInDB[i].videoName === oldVideoName &&
+                    jsonDataInDB[i].VideoPoster === oldVideoPoster
+                ) {
+                    const changElem = {
+                        videoId: newVideoId,
+                        videoName: newVideoName,
+                        videoChannelName: jsonDataInDB[i].videoChannelName,
+                        VideoPoster: newVideoPoster
+                    }
+                    modArrBD.push(changElem);
+                } else {
+                    modArrBD.push(jsonDataInDB[i]);
+                }
+            }
+
+            editDataInBD(modArrBD)
+            res.json(modArrBD)
+        })
+
 
     } else {
-        res.json('не хватает данных или не корректный PUT запрос');
+        res.json("не достаточо свойств или не корректный put запрос")
     }
-
 });
+
 
 
 
@@ -141,31 +135,18 @@ app.delete('/', (req, res) => {
                         jsonDataInDB[i].videoChannelName === videoChannelName &&
                         jsonDataInDB[i].VideoPoster == VideoPoster
                     ) {
-
                     } else {
                         modArrBD.push(jsonDataInDB[i]);
                     }
+                    await editDataInBD(modArrBD)
                 }
-                await editDataInBD(modArrBD)
-
                 res.json(modArrBD);
             };
         });
+    } else {
+        res.json('запрос не содержт нужых свойств')
     }
-
-
-
-
-
-
-
-
 });
-
-
-
-
-
 
 
 app.listen(PORT, () => {
