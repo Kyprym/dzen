@@ -68,9 +68,7 @@ app.put('/', async (req, res) => {
     if (oldVideoId && newVideoId &&
         oldVideoName && newVideoName &&
         oldVideoPoster && newVideoPoster) {
-
-
-        fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", (err, data) => {
+        fs.readFile("./src/dataBase/videoDataBase/VideoDataBase.json", "utf8", async (err, data) => {
             const jsonDataInDB = JSON.parse(data);
             let modArrBD = [];
 
@@ -92,7 +90,7 @@ app.put('/', async (req, res) => {
                 }
             }
 
-            editDataInBD(modArrBD)
+            await editDataInBD(modArrBD)
             res.json(modArrBD)
         })
 
@@ -101,12 +99,6 @@ app.put('/', async (req, res) => {
         res.json("не достаточо свойств или не корректный put запрос")
     }
 });
-
-
-
-
-
-
 
 app.delete('/', (req, res) => {
     const {
